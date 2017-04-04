@@ -18,6 +18,19 @@ namespace ThreeorMoreConsole {
 
             const int NUMBER_OF_DICE = 5;
 
+            Console.Write("\nEnter the number of faces the dice should have: ");
+            int faceNum = Convert.ToInt32(Console.ReadLine());
+            List<Die> dice = new List<Die>();
+            for(int i = 0; i<NUMBER_OF_DICE; i++) {
+                Die die = new Die(faceNum);
+                dice.Add(die);
+            }
+
+            Console.Write("\nEnter the number of points needed to win: ");
+            int maxScore = Convert.ToInt32(Console.ReadLine());
+
+            
+
         }
     }
 }
