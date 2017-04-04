@@ -9,6 +9,7 @@ namespace ThreeorMoreConsole {
         private int turnNumber;
         private Player activePlayer;
         private Die[] dice;
+        private string notes;
 
         public int TurnNumber {
             get {
@@ -26,20 +27,42 @@ namespace ThreeorMoreConsole {
             }
         }
 
-        public HistoryEntry(int turnNumber, Player activePlayer, Die[] dice) {
+        public string Notes {
+            get {
+                return this.notes;
+            }
+        }
+
+        public HistoryEntry(int turnNumber, Player activePlayer, Die[] dice, string notes = "") {
             if(activePlayer == null || dice == null || dice.Length == 0) {
-                throw new FormatException("No parameters can be null or zero-length");
+                throw new ArgumentException("No parameters can be null or zero-length");
             }
             this.turnNumber = turnNumber;
             this.activePlayer = activePlayer;
             this.dice = dice;
+            this.notes = notes;
+        }
+
+        public HistoryEntry(string notes) {
+            this.notes = notes;
         }
 
         public string getReadableFormat() {
             string output = "";
-            output = string.Format("Turn: {0} \nPlayer: {2} \nDice: ", this.turnNumber, this.activePlayer.Name);
-            foreach(Die die in dice) {
-                output += string.Format("{0} ", die.Value);
+            if (turnNumber != 0) {
+                output += string.Format("Turn: {0} \n", turnNumber);
+            }
+            if(activePlayer != null) {
+                output += string.Format("Player: {0} \n", activePlayer.Name);
+            }
+            if (dice.Length > 0) {
+                output += "Dice: ";
+                foreach (Die die in dice) {
+                    output += string.Format("{0} ", die.Value);
+                }
+            }
+            if (notes.Length > 0) {
+                output += string.Format("\n{0}", notes);
             }
             return output;
         }
