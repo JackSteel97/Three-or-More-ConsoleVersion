@@ -51,5 +51,13 @@ namespace ThreeorMoreConsole {
             }
             return Math.Round(total / dice.Length, 1);
         }
+
+        public int getTotalofDice() {
+            int total = 0;
+            foreach (Die die in dice) {
+                total += die.Value;
+            }
+            return total;
+        }
     }
 }
