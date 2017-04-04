@@ -43,5 +43,13 @@ namespace ThreeorMoreConsole {
             }
             return output;
         }
+
+        public double getAverageofDice() {
+            double total = 0;
+            foreach(Die die in dice) {
+                total += die.Value;
+            }
+            return Math.Round(total / dice.Length, 1);
+        }
     }
 }
