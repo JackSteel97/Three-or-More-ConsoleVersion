@@ -20,7 +20,7 @@ namespace ThreeorMoreConsole {
             this.WINNING_SCORE = scoreToWin;
             this.turnNumber = 1;
             this.gameOver = false;
-
+            history = new List<HistoryEntry>();
             history.Add(new HistoryEntry("Game Start"));
 
             foreach(Player player in players) {
@@ -28,7 +28,43 @@ namespace ThreeorMoreConsole {
             }
 
             this.dice = dice;
+        }
 
+        public void startGame() {
+            do {
+                nextTurn();
+            } while (!gameOver);
+        }
+
+        private void nextTurn() {
+            Player activePlayer = players.Dequeue();
+            
+        }
+
+        private int getDiceToRollNext() {
+            Console.WriteLine("Select which dice to roll next: ");
+            List<int> validDice = new List<int>();
+            for(int i = 0; i<dice.Length;i++) {
+                if (!dice[i].Rolled) {
+                    Console.WriteLine("Die ({0})",i);
+                }
+            }
+           
+            bool valid = false;
+            int dieNum = 0;
+            do {
+                Console.Write("\nEnter a number: ");
+                string input = Console.ReadLine();
+                
+                valid = int.TryParse(input, out dieNum);
+                if (valid) {
+                    valid = validDice.Contains(dieNum);
+                }
+                if (!valid) {
+                    Console.WriteLine("Invalid choice...");
+                }
+            } while (!valid);
+            return dieNum;
         }
     }
 }
