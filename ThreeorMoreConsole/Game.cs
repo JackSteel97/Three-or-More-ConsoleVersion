@@ -38,7 +38,19 @@ namespace ThreeorMoreConsole {
 
         private void nextTurn() {
             Player activePlayer = players.Dequeue();
-            
+            do {
+                getDiceToRollNext();
+            } while (!allDiceRolled());
+        }
+
+
+        private bool allDiceRolled() {
+            foreach(Die die in dice) {
+                if (!die.Rolled) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private int getDiceToRollNext() {
