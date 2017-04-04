@@ -26,5 +26,13 @@ namespace ThreeorMoreConsole {
                 this.points = value;
             }
         }
+
+        public Player(string name) {
+            if (name.Length == 0 || name == null) {
+                throw new FormatException("Name cannot be empty or null");
+            }
+            this.name = name;
+
+        }
     }
 }
