@@ -38,11 +38,50 @@ namespace ThreeorMoreConsole {
 
         private void nextTurn() {
             Player activePlayer = players.Dequeue();
+           
             do {
-                getDiceToRollNext();
+                int die = getDiceToRollNext();
+                dice[die].roll();              
             } while (!allDiceRolled());
+
+            bool reroll;
+            activePlayer.Points += analyseDiceForScore(countDiceValues(), out reroll);
         }
 
+        private Dictionary<int, int> countDiceValues() {
+            Dictionary<int, int> numberOccurrences = new Dictionary<int, int>();
+            foreach(Die die in dice) {
+                int value = die.Value;
+                if (numberOccurrences.ContainsKey(value)) {
+                    numberOccurrences[value]++;
+                } else {
+                    numberOccurrences.Add(value, 1);
+                }
+            }
+            return numberOccurrences;
+        }
+
+        private int analyseDiceForScore(Dictionary<int, int> numberOccurrences, out bool reroll) {
+            reroll = false;
+            if (numberOccurrences.ContainsValue(5)) {
+                //5 of a kind
+                return 12;
+            } else if (numberOccurrences.ContainsValue(4)) {
+                //4 of a kind
+               return 6;
+            } else if (numberOccurrences.ContainsValue(3)) {
+                //3 of a kind
+                return 3;
+            } else if (numberOccurrences.ContainsValue(2)) {
+                //2 of a kind
+                reroll = true;             
+            }
+            return 0;
+        }
+
+        private void alertToTwoMatches() {
+            Console.WriteLine("You have two of a kind and may re-throw remaining dice.");
+        }
 
         private bool allDiceRolled() {
             foreach(Die die in dice) {
