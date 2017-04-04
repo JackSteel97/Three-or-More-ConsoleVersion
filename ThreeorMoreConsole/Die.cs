@@ -15,7 +15,7 @@ namespace ThreeorMoreConsole {
                 if (this.rolled) {
                     return this.value;
                 }else {
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("Die must be rolled first");
                 }
                 
             }
@@ -44,10 +44,14 @@ namespace ThreeorMoreConsole {
         }
 
         public int roll() {
-            Random rnd = new Random();
-            int rolledNum = rnd.Next(1, this.numberOfFaces);
-            this.value = rolledNum;
-            return rolledNum;
+            if (!this.rolled) {
+                Random rnd = new Random();
+                int rolledNum = rnd.Next(1, this.numberOfFaces);
+                this.value = rolledNum;
+                this.rolled = true;
+                return rolledNum;
+            }
+            throw new InvalidOperationException("Die must be rolled first");
         }
     }
 }
