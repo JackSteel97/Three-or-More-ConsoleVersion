@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ThreeorMoreConsole {
     class Game {
@@ -38,14 +36,55 @@ namespace ThreeorMoreConsole {
 
         private void nextTurn() {
             Player activePlayer = players.Dequeue();
-           
+
             do {
                 int die = getDiceToRollNext();
-                dice[die].roll();              
+                dice[die].roll();
+                outputRolledDice();
             } while (!allDiceRolled());
 
             bool reroll;
-            activePlayer.Points += analyseDiceForScore(countDiceValues(), out reroll);
+            Dictionary<int, int> numberOccurrences = countDiceValues();
+            activePlayer.Points += analyseDiceForScore(numberOccurrences, out reroll);
+            history.Add(new HistoryEntry(turnNumber, activePlayer, dice));
+
+            if (reroll) {
+                alertToTwoMatches();
+                //find numbers that match
+                int doubleNumber = 0;
+                foreach (KeyValuePair<int, int> entry in numberOccurrences) {
+                    if(entry.Value == 2) {
+                        doubleNumber = entry.Key;
+                    }
+                }
+                //reset other dice
+                foreach(Die die in dice) {
+                    if (die.Value != doubleNumber) {
+                        die.Rolled = false;
+                    }
+                }
+                //reroll
+                do {
+                    int die = getDiceToRollNext();
+                    dice[die].roll();
+                    outputRolledDice();
+                } while (!allDiceRolled());
+
+                numberOccurrences = countDiceValues();
+                activePlayer.Points += analyseDiceForScore(numberOccurrences, out reroll, true);
+                history.Add(new HistoryEntry(turnNumber, activePlayer, dice,"after re-rolling"));
+            }
+            if (activePlayer.Points >= WINNING_SCORE) {
+                endGame(activePlayer);
+            }
+           
+            players.Enqueue(activePlayer);
+            turnNumber++;
+        }
+
+        private void endGame(Player winner) {
+            gameOver = true;
+            Console.WriteLine("Game Over! {0} won with a score of {1} in {2} turns.", winner.Name, winner.Points, turnNumber);
         }
 
         private Dictionary<int, int> countDiceValues() {
@@ -61,7 +100,7 @@ namespace ThreeorMoreConsole {
             return numberOccurrences;
         }
 
-        private int analyseDiceForScore(Dictionary<int, int> numberOccurrences, out bool reroll) {
+        private int analyseDiceForScore(Dictionary<int, int> numberOccurrences, out bool reroll, bool secondRoll = false) {
             reroll = false;
             if (numberOccurrences.ContainsValue(5)) {
                 //5 of a kind
@@ -74,7 +113,9 @@ namespace ThreeorMoreConsole {
                 return 3;
             } else if (numberOccurrences.ContainsValue(2)) {
                 //2 of a kind
-                reroll = true;             
+                if (!secondRoll) {
+                    reroll = true;
+                }
             }
             return 0;
         }
@@ -92,12 +133,21 @@ namespace ThreeorMoreConsole {
             return true;
         }
 
+        private void outputRolledDice() {
+            for(int i = 0; i<dice.Length; i++) {
+                if (dice[i].Rolled) {
+                    Console.WriteLine("Die {0}: {1}", i + 1,dice[i].Value);
+                }
+            }
+        }
+
         private int getDiceToRollNext() {
             Console.WriteLine("Select which dice to roll next: ");
             List<int> validDice = new List<int>();
             for(int i = 0; i<dice.Length;i++) {
                 if (!dice[i].Rolled) {
-                    Console.WriteLine("Die ({0})",i);
+                    Console.WriteLine("Die ({0})",i+1);
+                    validDice.Add(i + 1);
                 }
             }
            
@@ -115,7 +165,7 @@ namespace ThreeorMoreConsole {
                     Console.WriteLine("Invalid choice...");
                 }
             } while (!valid);
-            return dieNum;
+            return dieNum-1;
         }
     }
 }
