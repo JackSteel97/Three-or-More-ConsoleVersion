@@ -29,7 +29,8 @@ namespace ThreeorMoreConsole {
             Console.Write("\nEnter the number of points needed to win: ");
             int maxScore = Convert.ToInt32(Console.ReadLine());
 
-            
+            Game game = new Game(maxScore, players.ToArray(), dice.ToArray());
+            game.startGame();
 
         }
     }
