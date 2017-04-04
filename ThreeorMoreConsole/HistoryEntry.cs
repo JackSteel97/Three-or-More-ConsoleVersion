@@ -35,5 +35,13 @@ namespace ThreeorMoreConsole {
             this.dice = dice;
         }
 
+        public string getReadableFormat() {
+            string output = "";
+            output = string.Format("Turn: {0} \nPlayer: {2} \nDice: ", this.turnNumber, this.activePlayer.Name);
+            foreach(Die die in dice) {
+                output += string.Format("{0} ", die.Value);
+            }
+            return output;
+        }
     }
 }
