@@ -12,7 +12,12 @@ namespace ThreeorMoreConsole {
 
         public int Value {
             get {
-                return this.value;
+                if (this.rolled) {
+                    return this.value;
+                }else {
+                    throw new InvalidOperationException();
+                }
+                
             }
         }
         public bool Rolled {
@@ -30,6 +35,12 @@ namespace ThreeorMoreConsole {
             set {
                 this.numberOfFaces = value;
             }
+        }
+
+        public Die(int numberOfFaces) {
+            this.numberOfFaces = numberOfFaces;
+            this.rolled = false;
+            this.value = 1;
         }
 
         public int roll() {
